@@ -1,0 +1,28 @@
+version: "3"
+services:
+  #first service is postgres
+  database:
+    image: postgres
+    restart: always
+    #volume is used to persist data created in the docker container
+    volumes:
+      - data:/var/lib/postgres
+    environment:
+      -POSTGRES_PASSWORD: password
+
+  search:
+    build: ./SearchAPI
+    restart: always
+    environment:
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5433/search_api
+    depends_on:
+      - database
+    volumes:
+      - .:/code
+    ports:
+      - "8080:8080"
+
+volumes:
+  data:
